@@ -2,3 +2,14 @@ title: 지급명령 매뉴얼
 description: 지급명령(독촉절차) 신청부터 확정·강제집행까지 실무 가이드
 theme: jekyll-theme-cayman
 lang: ko-KR
+
+# GitHub Pages 프로젝트 사이트 경로 (홈 화면 아이콘/PWA 경로 계산에 사용)
+url: https://airrotc29.github.io
+baseurl: /Payment-order-manual
+
+# 모든 페이지에 테마 레이아웃 적용 (head-custom.html 을 통해 PWA 태그 주입)
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
