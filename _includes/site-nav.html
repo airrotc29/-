@@ -1,0 +1,39 @@
+<nav class="site-nav">
+  <a class="site-nav-brand" href="{{ '/' | relative_url }}">
+    <img src="{{ '/assets/logo.png' | relative_url }}" alt="에이스종합관리(주)">
+    <span class="site-nav-brand-sub">사업소관리팀</span>
+  </a>
+
+  <div class="site-nav-links">
+    <a href="{{ '/' | relative_url }}">홈</a>
+    <a href="{{ '/docs/지급명령-매뉴얼.html' | relative_url }}">지급명령 매뉴얼</a>
+    <a href="{{ '/docs/전자소송-신청절차.html' | relative_url }}">전자소송 신청안내</a>
+  </div>
+</nav>
+
+<style>
+  .site-nav{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+    gap:.8rem 1.5rem;
+    padding:.9rem clamp(1rem,4vw,3rem);
+    background:#fff;border-bottom:1px solid #e7ebf3;
+  }
+  .site-nav-brand{
+    display:flex;align-items:center;gap:.6rem;text-decoration:none;
+  }
+  .site-nav-brand img{height:28px;width:auto;display:block;}
+  .site-nav-brand-sub{
+    font-size:.72rem;color:#6b7a90;font-weight:600;letter-spacing:.01em;
+    border-left:1px solid #d8dee9;padding-left:.6rem;
+  }
+  .site-nav-links{display:flex;flex-wrap:wrap;gap:1.4rem;}
+  .site-nav-links a{
+    color:#33415c;text-decoration:none;font-weight:600;font-size:.92rem;
+  }
+  .site-nav-links a:hover{color:#1a3f9e;}
+
+  .site-footer-custom{
+    text-align:center;color:#8b96a8;font-size:.85rem;
+    padding:2rem 1rem 2.5rem;
+  }
+</style>
