@@ -1,6 +1,17 @@
 // ===== 연도 자동 표시 =====
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// ===== 카카오톡 문의 링크 =====
+(function () {
+  // ▼ 실제 카카오톡 채널 채팅 주소 또는 오픈채팅 주소로 변경하세요.
+  //   예) 채널: 'http://pf.kakao.com/_채널ID/chat'   오픈채팅: 'https://open.kakao.com/o/xxxxx'
+  var KAKAO_URL = 'http://pf.kakao.com/_castingvote/chat';
+  ['kakaoFab', 'kakaoContactBtn'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.href = KAKAO_URL;
+  });
+})();
+
 // ===== 모바일 네비게이션 토글 =====
 (function () {
   const toggle = document.getElementById('navToggle');
