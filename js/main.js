@@ -1,6 +1,52 @@
 // ===== 연도 자동 표시 =====
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// ===== 페이지 열 때 항상 맨 위에서 시작 (특히 모바일) =====
+if ('scrollRestoration' in history) { try { history.scrollRestoration = 'manual'; } catch (e) {} }
+window.addEventListener('load', function () { window.scrollTo(0, 0); });
+
+// ===== 카카오톡 문의 =====
+(function () {
+  // ▼ 카카오톡 채널을 만들면 아래 KAKAO_CHANNEL_URL 에 채팅 주소를 넣으세요.
+  //   예) 'http://pf.kakao.com/_채널ID/chat'  (채널이 있으면 바로 채팅창이 열립니다)
+  var KAKAO_CHANNEL_URL = 'http://pf.kakao.com/_SeSPX/chat'; // 채널 채팅 주소 (없으면 아이디 안내로 동작)
+  var KAKAO_ID = 'airrotc29@gmail.com'; // 카카오톡 아이디(이메일)
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return false; });
+    }
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return Promise.resolve(ok);
+    } catch (e) { return Promise.resolve(false); }
+  }
+
+  function handleKakao(e) {
+    if (e) e.preventDefault();
+    if (KAKAO_CHANNEL_URL) {
+      window.open(KAKAO_CHANNEL_URL, '_blank', 'noopener');
+      return;
+    }
+    // 채널이 없으면: 아이디 복사 + 안내
+    copyText(KAKAO_ID).then(function (copied) {
+      var msg = copied
+        ? '카카오톡 아이디가 복사되었습니다.\n\n' + KAKAO_ID + '\n\n카카오톡 → 친구 추가 → 아이디 검색에 붙여넣기(추가) 후 메시지를 보내주세요.'
+        : '카카오톡에서 아래 아이디를 검색해 친구 추가 후 문의해 주세요.\n\n' + KAKAO_ID;
+      window.alert(msg);
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('.js-kakao, #kakaoFab');
+    if (t) handleKakao(e);
+  });
+})();
+
 // ===== 모바일 네비게이션 토글 =====
 (function () {
   const toggle = document.getElementById('navToggle');
@@ -151,6 +197,13 @@ function renderPdfThumbs() {
       html += `<h3>${hkEsc(p.title)}</h3>`;
       html += `<p class="post-text">${hkEsc(p.body).replace(/\n/g, '<br />')}</p>`;
       if (p.file) html += `<a class="btn btn-sm btn-primary" href="${hkEsc(p.file)}" download>${hkEsc(p.fileName || '첨부파일')} 다운로드 ↓</a>`;
+      if (p.link) html += `<a class="btn btn-sm btn-primary" href="${hkEsc(p.link)}" target="_blank" rel="noopener">${hkEsc(p.linkText || '다운받기')} ↓</a>`;
+      // 앱 출시 글이면 제목/내용에 따라 스토어 다운로드 버튼을 자동으로 옆에 추가
+      var _ac = (p.title || '') + ' ' + (p.body || '');
+      if (/안드로이드|android|구글|google\s*play/i.test(_ac))
+        html += `<a class="btn btn-sm btn-app btn-googleplay" href="https://play.google.com/store/apps/details?id=com.lksoft.mgmt" target="_blank" rel="noopener">▶ Google Play</a>`;
+      if (/애플|apple|아이폰|iphone|\bios\b|앱스토어|app\s*store/i.test(_ac))
+        html += `<a class="btn btn-sm btn-app btn-appstore" href="https://apps.apple.com/kr/app/%EA%B4%80%EB%A6%AC%EB%8B%A8/id6755434083" target="_blank" rel="noopener"> App Store</a>`;
       html += hkDelBtn('post', p.id);
       html += '</div>';
       art.innerHTML = html;
@@ -385,8 +438,12 @@ function renderPdfThumbs() {
     return h;
   }
 
+  function progSortKey(it) { return String((it && it.updated) || '').replace(/\D/g, ''); }
+
   function render(items) {
-    var current = Array.isArray(items) ? items : [];
+    var current = (Array.isArray(items) ? items.slice() : []);
+    // 최근 갱신(기준 시각)이 맨 위에 오도록 최신순 정렬
+    current.sort(function (a, b) { return progSortKey(b).localeCompare(progSortKey(a)); });
     grid.innerHTML = '';
     if (current.length === 0) { if (empty) empty.hidden = false; return; }
     if (empty) empty.hidden = true;

@@ -2,7 +2,7 @@
 // 토큰 로그인 → 관리자 모드 → 사진/영상/공지/홍보자료를 GitHub API로 직접 커밋
 (function () {
   const OWNER = 'airrotc29';
-  const REPO = '-';
+  const REPO = 'castingvote';
   const BRANCH = 'main';
   const API = 'https://api.github.com';
   const TOKEN_KEY = 'ecv_admin_token';
@@ -174,8 +174,9 @@
     if (window.HK.renderResources) window.HK.renderResources();
   });
 
-  // 저장된 토큰이 있으면 자동 로그인
-  if (TOKEN) verifyToken(TOKEN).then((ok) => { if (ok) setAdminMode(true); });
+  // 접속 시에는 항상 '로그아웃(일반)' 상태로 시작합니다.
+  // (저장된 토큰이 있어도 자동 로그인하지 않고, [관리자] → [로그인] 시에만 관리자 모드가 켜집니다.
+  //  저장된 토큰은 로그인 창에 자동 입력되어 클릭 한 번으로 로그인됩니다.)
 
   // ---------- 사진 올리기 ----------
   let photoFiles = [];
@@ -341,6 +342,7 @@
     $('postModalTitle').textContent = '공지·소식 글 작성';
     $('postSubmit').textContent = '글 올리기';
     $('postTitle').value = ''; $('postBody').value = ''; $('postImage').value = ''; $('postFile').value = '';
+    $('postLink').value = ''; $('postLinkText').value = '';
     hint($('postStatus'), '', ''); openModal('postModal');
   });
 
@@ -350,6 +352,8 @@
     if (!title || !body) { hint($('postStatus'), '제목과 내용을 입력해 주세요.', 'error'); return; }
     const imgFile = $('postImage').files[0];
     const attFile = $('postFile').files[0];
+    const link = $('postLink').value.trim();
+    const linkText = $('postLinkText').value.trim();
     const btn = $('postSubmit'); btn.disabled = true;
     try {
       let image = null, file = null, fileName = null;
@@ -377,11 +381,12 @@
             image: image || p.image,
             file: file || p.file,
             fileName: fileName || p.fileName,
+            link: link, linkText: linkText,
           };
         }), '공지 글 수정');
         hint($('postStatus'), '글이 수정됐습니다! (반영까지 1~2분)', 'success');
       } else {
-        const post = { id: 'p' + Date.now(), title, body, date: today(), image, file, fileName };
+        const post = { id: 'p' + Date.now(), title, body, date: today(), image, file, fileName, link, linkText };
         next = await mutateJson('assets/data/posts.json', (items) => items.concat([post]), '공지 글 추가');
         hint($('postStatus'), '글이 등록됐습니다! (반영까지 1~2분)', 'success');
       }
@@ -481,6 +486,8 @@
         $('postTitle').value = p ? p.title : '';
         $('postBody').value = p ? p.body : '';
         $('postImage').value = ''; $('postFile').value = '';
+        $('postLink').value = p ? (p.link || '') : '';
+        $('postLinkText').value = p ? (p.linkText || '') : '';
         hint($('postStatus'), p && (p.image || p.file) ? '이미지·첨부는 새로 선택할 때만 교체됩니다.' : '', '');
         openModal('postModal');
       }
