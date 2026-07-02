@@ -1,27 +1,18 @@
-{%- comment -%} 지급명령청구 표지 배너 (홈 상단 히어로) {%- endcomment -%}
+{%- comment -%} 지급명령청구 히어로 배너 (홈 상단) {%- endcomment -%}
 <div class="cover-hero">
-  <div class="cover-topbar">
-    <span class="cover-team">ACE 종합관리 (주) 사업소관리팀</span>
-    <img class="cover-brand-logo" src="{{ '/assets/logo.png' | relative_url }}" alt="에이스종합관리(주)">
-
-  </div>
-
   <div class="cover-body">
-    <div class="cover-text">
-      <div class="cover-emblem">
-        <img src="{{ '/assets/icons/icon-192.png' | relative_url }}" alt="" class="cover-emblem-icon">
-        <span class="cover-emblem-label">대한민국 법원<br><small>COURT OF KOREA</small></span>
-      </div>
+    <p class="cover-eyebrow">관리비 미납금 · 독촉절차</p>
+    <h1 class="cover-title">지급명령청구</h1>
+    <p class="cover-subtitle">전자소송포탈 지급명령 청구 실무 매뉴얼</p>
 
-      <p class="cover-eyebrow">관리비 미납금</p>
-      <h1 class="cover-title">지급명령청구</h1>
+    <p class="cover-desc">
+      지급명령 청구 기준과 청구<span class="cover-hanja">前</span> 준비 사항부터 전자소송포탈 신청까지,
+      실제 화면과 함께 안내해 드립니다.
+    </p>
 
-      <hr class="cover-divider">
-
-      <ul class="cover-points">
-        <li>지급명령 청구 기준 및 청구<span class="cover-hanja">前</span> 준비 사항</li>
-        <li>전자소송포탈 지급명령 청구 실무 매뉴얼</li>
-      </ul>
+    <div class="cover-cta">
+      <a class="cover-btn cover-btn--solid" href="{{ '/docs/지급명령-매뉴얼.html' | relative_url }}">매뉴얼 보기</a>
+      <a class="cover-btn cover-btn--outline" href="{{ '/docs/전자소송-신청절차.html' | relative_url }}">전자소송 신청안내</a>
     </div>
   </div>
 </div>
@@ -29,63 +20,45 @@
 <style>
   .cover-hero{
     position:relative;
-    margin:-2rem calc(50% - 50vw) 2.5rem;   /* 컨텐츠 폭을 벗어나 전체폭으로 */
-    padding:clamp(1rem,3vw,2.5rem) clamp(1rem,5vw,4rem);
-    background:linear-gradient(120deg,#0d2350 0%,#122c62 55%,#0e2350 100%);
-    color:#fff;
-    overflow:hidden;
+    margin:0 calc(50% - 50vw) 2.5rem;   /* 컨텐츠 폭을 벗어나 전체폭으로 */
+    padding:clamp(3.2rem,9vw,6rem) clamp(1.2rem,5vw,4rem);
+    background:linear-gradient(135deg,#3f6ae0 0%,#2148b8 55%,#122c74 100%);
+    color:#fff;text-align:center;overflow:hidden;
   }
-  .cover-hero::before{ /* 좌측 밝은 파랑 액센트 패널 */
-    content:"";position:absolute;top:0;left:0;bottom:0;width:min(34%,520px);
-    background:linear-gradient(180deg,#2f57c9,#2b4db0);opacity:.55;
-    clip-path:polygon(0 0,100% 0,86% 100%,0 100%);pointer-events:none;
-  }
-  .cover-topbar{
-    position:relative;display:flex;justify-content:space-between;align-items:center;
-    gap:1rem;flex-wrap:wrap;margin-bottom:clamp(1rem,3vw,2rem);
-  }
-  .cover-team{font-size:clamp(.72rem,1.4vw,.95rem);color:#cdd8f5;letter-spacing:.02em;}
-  .cover-brand-logo{
-    height:clamp(26px,3.2vw,40px);width:auto;display:block;
-    background:#fff;border-radius:.4em;padding:.25em .45em;
-    box-shadow:0 2px 8px rgba(0,0,0,.25);
-  }
-  .cover-body{
-    position:relative;
-  }
-  .cover-text{min-width:0;}
-  .cover-emblem{display:flex;align-items:center;gap:.6em;margin-bottom:.6rem;}
-  .cover-emblem-icon{width:clamp(38px,5vw,58px);height:auto;
-    background:#fff;border-radius:.4em;padding:.15em;}
-  .cover-emblem-label{font-weight:700;line-height:1.05;font-size:clamp(.95rem,2vw,1.35rem);}
-  .cover-emblem-label small{font-weight:600;font-size:.62em;letter-spacing:.08em;color:#c7d3f2;}
+  .cover-body{position:relative;max-width:760px;margin:0 auto;}
   .cover-eyebrow{
-    margin:.2rem 0 .1rem;color:#7fb2ff;font-weight:700;
-    font-size:clamp(1.1rem,3vw,2rem);
+    margin:0 0 .8rem;font-weight:700;letter-spacing:.02em;
+    color:#dbe6ff;font-size:clamp(.9rem,2vw,1.1rem);
   }
-  .cover-title{
-    margin:0;border:0;color:#fff;font-weight:900;line-height:1;
-    font-size:clamp(2.6rem,9vw,6rem);letter-spacing:.06em;
-    text-shadow:0 3px 14px rgba(0,0,0,.35);
+  .cover-hero .cover-title{
+    margin:0;border:0;color:#fff !important;font-weight:800;line-height:1.15;
+    font-size:clamp(2.6rem,8vw,4.4rem);letter-spacing:.01em;
   }
-  .cover-divider{
-    border:0;border-top:1px solid rgba(255,255,255,.4);
-    margin:clamp(1rem,3vw,1.8rem) 0;max-width:640px;
+  .cover-subtitle{
+    margin:.9rem 0 0;font-weight:700;
+    font-size:clamp(1.15rem,3vw,1.6rem);color:#f2f5ff;
   }
-  .cover-points{list-style:none;margin:0;padding:0;}
-  .cover-points li{
-    position:relative;padding-left:1.9em;
-    font-size:clamp(1rem,2.3vw,1.45rem);font-weight:700;
-    margin:.55em 0;color:#f2f5ff;
+  .cover-desc{
+    margin:1.1rem auto 0;max-width:640px;
+    font-size:clamp(.95rem,2vw,1.05rem);line-height:1.7;color:#d6e0fb;
   }
-  .cover-points li::before{
-    content:"";position:absolute;left:0;top:.28em;
-    width:.85em;height:.85em;border-radius:.18em;
-    background:#8ef05a;box-shadow:0 0 0 3px rgba(142,240,90,.25);
-  }
-  .cover-hanja{font-size:.78em;opacity:.9;padding:0 .05em;}
+  .cover-hanja{font-size:.85em;opacity:.85;padding:0 .05em;}
 
-  @media (max-width:720px){
-    .cover-hero::before{width:60%;opacity:.4;}
+  .cover-cta{
+    margin-top:2.2rem;display:flex;flex-wrap:wrap;gap:.9rem;justify-content:center;
+  }
+  .cover-btn{
+    display:inline-block;padding:.85em 1.8em;border-radius:999px;
+    font-weight:700;font-size:.98rem;text-decoration:none;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .cover-btn:hover{transform:translateY(-1px);}
+  .cover-btn--solid{
+    background:#fff;color:#1a3f9e;
+    box-shadow:0 6px 18px rgba(0,0,0,.18);
+  }
+  .cover-btn--outline{
+    background:transparent;color:#fff;
+    border:1.5px solid rgba(255,255,255,.75);
   }
 </style>
