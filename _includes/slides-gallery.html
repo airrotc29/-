@@ -1,0 +1,69 @@
+{%- comment -%}
+  assets/slides/ 폴더 안의 모든 이미지를 파일명 순으로 "전부" 표시한다.
+  (파일 개수 제한 없음 — 29장이든 그 이상이든 넣는 대로 자동 표시)
+  캡션이 필요하면 _data/slides.yml 에 { file, step, title, desc } 항목을 추가하면 매칭된다.
+{%- endcomment -%}
+{%- assign img_exts = ".png .jpg .jpeg .webp .gif .svg" -%}
+{%- assign slide_files = site.static_files | where_exp: "f", "f.path contains '/assets/slides/'" | sort: "name" -%}
+{%- assign shown = 0 -%}
+{%- for f in slide_files -%}{%- assign e = f.extname | downcase -%}{%- if img_exts contains e -%}{%- assign shown = shown | plus: 1 -%}{%- endif -%}{%- endfor -%}
+
+{%- if shown == 0 -%}
+<div class="slides-empty">
+  <p><strong>슬라이드 이미지가 아직 없습니다.</strong></p>
+  <p><code>assets/slides/</code> 폴더에 슬라이드 이미지를 올리면
+     (예: <code>01.png</code>, <code>02.png</code> … <code>29.png</code>)
+     여기에 <strong>전부 순서대로</strong> 표시됩니다.</p>
+</div>
+{%- else -%}
+<p class="slides-count">전체 {{ shown }}장</p>
+<div class="slides-gallery">
+  {%- assign n = 0 -%}
+  {%- for f in slide_files -%}
+    {%- assign e = f.extname | downcase -%}
+    {%- if img_exts contains e -%}
+      {%- assign n = n | plus: 1 -%}
+      {%- assign meta = site.data.slides | where: "file", f.name | first -%}
+      <figure class="slide-card" id="slide-{{ n }}">
+        <a href="{{ f.path | relative_url }}" class="slide-imglink" target="_blank" rel="noopener">
+          <img src="{{ f.path | relative_url }}" loading="lazy" decoding="async"
+               alt="{% if meta.title %}{{ meta.title }}{% else %}슬라이드 {{ n }}{% endif %}">
+        </a>
+        <figcaption class="slide-cap">
+          <span class="slide-step">{% if meta.step %}{{ meta.step }}{% else %}{{ n }}{% endif %}</span>
+          <span class="slide-body">
+            {%- if meta.title %}<span class="slide-title">{{ meta.title }}</span>{% endif -%}
+            {%- if meta.desc %}<span class="slide-desc">{{ meta.desc }}</span>{% endif -%}
+          </span>
+        </figcaption>
+      </figure>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+{%- endif -%}
+
+<style>
+  .slides-count{color:#6b7a90;font-size:.9rem;margin:.2rem 0 1rem;text-align:right;}
+  .slides-empty{
+    border:2px dashed #c3ccdb;border-radius:.6rem;padding:1.5rem;
+    background:#f6f8fc;color:#334;line-height:1.6;
+  }
+  .slides-empty code{background:#e6ebf5;padding:.1em .4em;border-radius:.3em;}
+  .slides-gallery{display:flex;flex-direction:column;gap:1.6rem;margin:1rem 0;}
+  .slide-card{margin:0;border:1px solid #e3e8f0;border-radius:.7rem;overflow:hidden;
+    background:#fff;box-shadow:0 4px 14px rgba(20,44,98,.08);}
+  .slide-imglink{display:block;background:#0d2350;line-height:0;}
+  .slide-card img{width:100%;height:auto;display:block;}
+  .slide-cap{display:flex;gap:.8rem;align-items:flex-start;
+    padding:.9rem 1rem;border-top:1px solid #eef1f6;}
+  .slide-step{flex:none;min-width:1.9em;height:1.9em;padding:0 .5em;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:#122c62;color:#fff;font-weight:800;border-radius:.4em;font-size:.9rem;}
+  .slide-body{display:flex;flex-direction:column;gap:.15rem;min-width:0;}
+  .slide-title{font-weight:700;color:#16233c;}
+  .slide-desc{color:#4a586e;font-size:.92rem;line-height:1.45;}
+  @media (max-width:600px){
+    .slide-cap{padding:.7rem .8rem;}
+    .slide-desc{font-size:.88rem;}
+  }
+</style>
