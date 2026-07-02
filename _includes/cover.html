@@ -2,7 +2,8 @@
 <div class="cover-hero">
   <div class="cover-topbar">
     <span class="cover-team">ACE 종합관리 (주) 사업소관리팀</span>
-    <span class="cover-brand">◆ 에이스종합관리(주)</span>
+    <img class="cover-brand-logo" src="{{ '/assets/logo.png' | relative_url }}" alt="에이스종합관리(주)">
+
   </div>
 
   <div class="cover-body">
@@ -50,10 +51,10 @@
     gap:1rem;flex-wrap:wrap;margin-bottom:clamp(1rem,3vw,2rem);
   }
   .cover-team{font-size:clamp(.72rem,1.4vw,.95rem);color:#cdd8f5;letter-spacing:.02em;}
-  .cover-brand{
-    background:#fff;color:#122c62;font-weight:800;
-    padding:.35em .8em;border-radius:.4em;font-size:clamp(.72rem,1.4vw,.95rem);
-    white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.25);
+  .cover-brand-logo{
+    height:clamp(26px,3.2vw,40px);width:auto;display:block;
+    background:#fff;border-radius:.4em;padding:.25em .45em;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
   }
   .cover-body{
     position:relative;display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
