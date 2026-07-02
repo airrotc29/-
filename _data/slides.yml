@@ -1,0 +1,33 @@
+# 전자소송포털 지급명령(독촉) 신청 단계별 슬라이드
+# file: assets/slides/ 안에 넣을 이미지 파일명 (아래 이름 그대로 업로드하면 자동 표시)
+# step: 표시용 단계 라벨 / title: 화면 제목 / desc: 조작 안내
+
+- file: 01-cover.png
+  step: "표지"
+  title: "관리비 미납금 · 지급명령청구"
+  desc: "지급명령 청구 기준 및 청구 前 준비 사항 / 전자소송포털 지급명령 청구 실무 매뉴얼"
+
+- file: 02-login.png
+  step: "1"
+  title: "전자소송포털 접속 · 로그인"
+  desc: '전자소송포털에 접속한 뒤, 사용자 등록한 정보로 "로그인" 을 누릅니다.'
+
+- file: 03-certificate.png
+  step: "2"
+  title: "인증서 로그인"
+  desc: '사용자 등록한 정보로 "아이디", "인증서/암호" 를 입력합니다.'
+
+- file: 04-select-complaint.png
+  step: "3"
+  title: "서류제출 – 소장 선택"
+  desc: '상단 "서류제출" 메뉴에서 민사 서류 중 "소장" 을 선택합니다.'
+
+- file: 05-payment-order-form.png
+  step: "4"
+  title: "지급명령신청서 선택"
+  desc: '서류제출 → 지급명령(독촉) 신청 탭 → "지급명령신청서" 를 선택합니다.'
+
+- file: 06-agree-submit.png
+  step: "5"
+  title: "전자소송 동의 · 당사자작성"
+  desc: '지급명령(독촉) 신청 → 전자소송 동의에 체크한 뒤 "당사자작성" 을 누릅니다.'
