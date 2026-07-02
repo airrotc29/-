@@ -1,12 +1,10 @@
 {%- comment -%}
-  assets/slides/ 폴더 안의 모든 이미지를 파일명 순으로 "전부" 표시한다.
-  (파일 개수 제한 없음 — 29장이든 그 이상이든 넣는 대로 자동 표시)
+  assets/slides/ 폴더 안의 모든 이미지를 파일명 순으로 "전부" 캐러셀(페이지 넘기기)로 보여준다.
   캡션이 필요하면 _data/slides.yml 에 { file, step, title, desc } 항목을 추가하면 매칭된다.
 {%- endcomment -%}
-{%- assign img_exts = ".png .jpg .jpeg .webp .gif .svg" -%}
-{%- assign slide_files = site.static_files | where_exp: "f", "f.path contains '/assets/slides/'" | sort: "name" -%}
-{%- assign shown = 0 -%}
-{%- for f in slide_files -%}{%- assign e = f.extname | downcase -%}{%- if img_exts contains e -%}{%- assign shown = shown | plus: 1 -%}{%- endif -%}{%- endfor -%}
+{%- assign slide_files = site.static_files | where_exp: "f", "f.path contains '/assets/slides/'" -%}
+{%- assign slide_files = slide_files | where_exp: "f", "f.extname != '.md'" | sort: "name" -%}
+{%- assign shown = slide_files.size -%}
 
 {%- if shown == 0 -%}
 <div class="slides-empty">
@@ -16,54 +14,152 @@
      여기에 <strong>전부 순서대로</strong> 표시됩니다.</p>
 </div>
 {%- else -%}
-<p class="slides-count">전체 {{ shown }}장</p>
-<div class="slides-gallery">
-  {%- assign n = 0 -%}
-  {%- for f in slide_files -%}
-    {%- assign e = f.extname | downcase -%}
-    {%- if img_exts contains e -%}
-      {%- assign n = n | plus: 1 -%}
-      {%- assign meta = site.data.slides | where: "file", f.name | first -%}
-      <figure class="slide-card" id="slide-{{ n }}">
-        <a href="{{ f.path | relative_url }}" class="slide-imglink" target="_blank" rel="noopener">
-          <img src="{{ f.path | relative_url }}" loading="lazy" decoding="async"
-               alt="{% if meta.title %}{{ meta.title }}{% else %}슬라이드 {{ n }}{% endif %}">
-        </a>
-        <figcaption class="slide-cap">
-          <span class="slide-step">{% if meta.step %}{{ meta.step }}{% else %}{{ n }}{% endif %}</span>
-          <span class="slide-body">
-            {%- if meta.title %}<span class="slide-title">{{ meta.title }}</span>{% endif -%}
-            {%- if meta.desc %}<span class="slide-desc">{{ meta.desc }}</span>{% endif -%}
-          </span>
-        </figcaption>
-      </figure>
-    {%- endif -%}
-  {%- endfor -%}
+<div class="slides-carousel" id="slidesCarousel">
+  <div class="sc-frame">
+    <a id="scImgLink" href="#" target="_blank" rel="noopener">
+      <img id="scImg" src="" alt="">
+    </a>
+    <button type="button" class="sc-nav sc-prev" id="scPrev" aria-label="이전 슬라이드">‹</button>
+    <button type="button" class="sc-nav sc-next" id="scNext" aria-label="다음 슬라이드">›</button>
+    <span class="sc-counter"><span id="scCurrent">1</span> / <span id="scTotal">{{ shown }}</span></span>
+  </div>
+
+  <div class="sc-cap">
+    <span class="sc-step" id="scStep">1</span>
+    <span class="sc-body">
+      <span class="sc-title" id="scTitle"></span>
+      <span class="sc-desc" id="scDesc"></span>
+    </span>
+  </div>
+
+  <div class="sc-jump">
+    <input type="range" id="scRange" min="1" max="{{ shown }}" value="1" step="1" aria-label="슬라이드 이동">
+  </div>
 </div>
+
+<script>
+(function(){
+  var slides = [
+    {%- for f in slide_files -%}
+      {%- assign meta = site.data.slides | where: "file", f.name | first -%}
+      {
+        src: {{ f.path | relative_url | jsonify }},
+        step: {{ meta.step | default: forloop.index | jsonify }},
+        title: {{ meta.title | default: "" | jsonify }},
+        desc: {{ meta.desc | default: "" | jsonify }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ];
+
+  var i = 0;
+  var img = document.getElementById('scImg');
+  var link = document.getElementById('scImgLink');
+  var step = document.getElementById('scStep');
+  var title = document.getElementById('scTitle');
+  var desc = document.getElementById('scDesc');
+  var current = document.getElementById('scCurrent');
+  var range = document.getElementById('scRange');
+  var prevBtn = document.getElementById('scPrev');
+  var nextBtn = document.getElementById('scNext');
+
+  function preload(idx){
+    if (idx >= 0 && idx < slides.length) { new Image().src = slides[idx].src; }
+  }
+
+  function render(){
+    var s = slides[i];
+    img.src = s.src;
+    img.alt = s.title || ('슬라이드 ' + (i + 1));
+    link.href = s.src;
+    step.textContent = s.step;
+    title.textContent = s.title;
+    title.style.display = s.title ? '' : 'none';
+    desc.textContent = s.desc;
+    desc.style.display = s.desc ? '' : 'none';
+    current.textContent = i + 1;
+    range.value = i + 1;
+    prevBtn.disabled = (i === 0);
+    nextBtn.disabled = (i === slides.length - 1);
+    preload(i + 1);
+    preload(i - 1);
+  }
+
+  function go(n){
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    render();
+  }
+
+  prevBtn.addEventListener('click', function(){ go(i - 1); });
+  nextBtn.addEventListener('click', function(){ go(i + 1); });
+  range.addEventListener('input', function(){ go(parseInt(range.value, 10) - 1); });
+
+  document.addEventListener('keydown', function(e){
+    var rect = document.getElementById('slidesCarousel').getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+    if (e.key === 'ArrowLeft') go(i - 1);
+    if (e.key === 'ArrowRight') go(i + 1);
+  });
+
+  var touchStartX = null;
+  var frame = document.querySelector('.sc-frame');
+  frame.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].clientX; }, {passive:true});
+  frame.addEventListener('touchend', function(e){
+    if (touchStartX === null) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) { dx < 0 ? go(i + 1) : go(i - 1); }
+    touchStartX = null;
+  }, {passive:true});
+
+  render();
+})();
+</script>
 {%- endif -%}
 
 <style>
-  .slides-count{color:#6b7a90;font-size:.9rem;margin:.2rem 0 1rem;text-align:right;}
   .slides-empty{
     border:2px dashed #c3ccdb;border-radius:.6rem;padding:1.5rem;
     background:#f6f8fc;color:#334;line-height:1.6;
   }
   .slides-empty code{background:#e6ebf5;padding:.1em .4em;border-radius:.3em;}
-  .slides-gallery{display:flex;flex-direction:column;gap:1.6rem;margin:1rem 0;}
-  .slide-card{margin:0;border:1px solid #e3e8f0;border-radius:.7rem;overflow:hidden;
-    background:#fff;box-shadow:0 4px 14px rgba(20,44,98,.08);}
-  .slide-imglink{display:block;background:#0d2350;line-height:0;}
-  .slide-card img{width:100%;height:auto;display:block;}
-  .slide-cap{display:flex;gap:.8rem;align-items:flex-start;
-    padding:.9rem 1rem;border-top:1px solid #eef1f6;}
-  .slide-step{flex:none;min-width:1.9em;height:1.9em;padding:0 .5em;
+
+  .slides-carousel{margin:1rem 0;}
+  .sc-frame{
+    position:relative;border-radius:.7rem;overflow:hidden;
+    background:#0d2350;box-shadow:0 4px 14px rgba(20,44,98,.16);
+    line-height:0;
+  }
+  .sc-frame img{width:100%;height:auto;display:block;}
+  .sc-nav{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:2.7rem;height:2.7rem;border-radius:50%;border:0;
+    background:#fff;color:#16233c;font-size:1.6rem;line-height:1;font-weight:700;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 10px rgba(0,0,0,.35);
+    transition:transform .15s, box-shadow .15s;
+  }
+  .sc-nav:hover{transform:translateY(-50%) scale(1.06);box-shadow:0 3px 14px rgba(0,0,0,.45);}
+  .sc-nav:disabled{opacity:.35;cursor:default;box-shadow:none;transform:translateY(-50%);}
+  .sc-prev{left:.7rem;}
+  .sc-next{right:.7rem;}
+  .sc-counter{
+    position:absolute;right:.8rem;bottom:.7rem;
+    background:rgba(10,20,50,.6);color:#fff;font-size:.82rem;font-weight:600;
+    padding:.25em .7em;border-radius:999px;
+  }
+
+  .sc-cap{display:flex;gap:.8rem;align-items:flex-start;padding:.9rem .2rem .3rem;}
+  .sc-step{flex:none;min-width:1.9em;height:1.9em;padding:0 .5em;
     display:inline-flex;align-items:center;justify-content:center;
     background:#122c62;color:#fff;font-weight:800;border-radius:.4em;font-size:.9rem;}
-  .slide-body{display:flex;flex-direction:column;gap:.15rem;min-width:0;}
-  .slide-title{font-weight:700;color:#16233c;}
-  .slide-desc{color:#4a586e;font-size:.92rem;line-height:1.45;}
+  .sc-body{display:flex;flex-direction:column;gap:.15rem;min-width:0;}
+  .sc-title{font-weight:700;color:#16233c;}
+  .sc-desc{color:#4a586e;font-size:.92rem;line-height:1.45;}
+
+  .sc-jump{padding:.2rem .2rem 0;}
+  .sc-jump input[type="range"]{width:100%;accent-color:#2148b8;}
+
   @media (max-width:600px){
-    .slide-cap{padding:.7rem .8rem;}
-    .slide-desc{font-size:.88rem;}
+    .sc-nav{width:2.2rem;height:2.2rem;font-size:1.3rem;}
+    .sc-desc{font-size:.88rem;}
   }
 </style>
